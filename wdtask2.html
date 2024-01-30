@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch with Lap Times</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #stopwatch {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    #controls {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 1em;
+      padding: 10px 20px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #55a7f7;
+      color: white;
+    }
+
+    #lapTimes {
+      text-align: center;
+    }
+
+    #lapTimesList {
+      list-style: none;
+      padding: 0;
+    }
+
+    .lapTime {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="stopwatch">0:00:00</div>
+  <div id="controls">
+    <button onclick="startStopwatch()">Start</button>
+    <button onclick="pauseStopwatch()">Pause</button>
+    <button onclick="restartStopwatch()">Restart</button>
+    <button onclick="recordLapTime()">Lap</button>
+  </div>
+
+  <div id="lapTimes">
+    <h3>Lap Times</h3>
+    <ul id="lapTimesList"></ul>
+  </div>
+
+  <script>
+    let stopwatchInterval;
+    let elapsedTime = 0;
+    let isRunning = false;
+    let lapTimes = [];
+
+    function startStopwatch() {
+      if (!isRunning) {
+        isRunning = true;
+        stopwatchInterval = setInterval(updateStopwatch, 1000);
+      }
+    }
+
+    function pauseStopwatch() {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(stopwatchInterval);
+      }
+    }
+
+    function restartStopwatch() {
+      pauseStopwatch();
+      elapsedTime = 0;
+      updateStopwatch();
+      lapTimes = [];
+      displayLapTimes();
+    }
+
+    function recordLapTime() {
+      if (isRunning) {
+        lapTimes.push(elapsedTime);
+        displayLapTimes();
+      }
+    }
+
+    function updateStopwatch() {
+      elapsedTime++;
+      displayStopwatch();
+    }
+
+    function displayStopwatch() {
+      const hours = Math.floor(elapsedTime / 3600);
+      const minutes = Math.floor((elapsedTime % 3600) / 60);
+      const seconds = elapsedTime % 60;
+      const formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      document.getElementById('stopwatch').innerText = formattedTime;
+    }
+
+    function displayLapTimes() {
+      const lapTimesList = document.getElementById('lapTimesList');
+      lapTimesList.innerHTML = '';
+
+      lapTimes.forEach((lapTime, index) => {
+        const li = document.createElement('li');
+        li.classList.add('lapTime');
+        li.innerText = `Lap ${index + 1}: ${formatLapTime(lapTime)}`;
+        lapTimesList.appendChild(li);
+      });
+    }
+
+    function formatLapTime(time) {
+      const hours = Math.floor(time / 3600);
+      const minutes = Math.floor((time % 3600) / 60);
+      const seconds = time % 60;
+      return `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+  </script>
+</body>
+</html>
